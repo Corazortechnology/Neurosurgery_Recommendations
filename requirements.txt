@@ -12,3 +12,4 @@ uvicorn
 groq
 openai
 pandas
+cryptography
