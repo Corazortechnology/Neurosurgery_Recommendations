@@ -1,0 +1,14 @@
+langchain
+langchain-qdrant
+sentence_transformers
+transformers
+torch
+pypdf
+qdrant-client
+google-generativeai
+python-dotenv
+fastapi
+uvicorn
+groq
+openai
+pandas
