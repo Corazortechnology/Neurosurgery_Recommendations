@@ -159,7 +159,12 @@ RECOMMENDATION GUIDELINES:
 STRUCTURED RECOMMENDATION FORMAT:
 if feedback_Data:
     Explain first the feedbacks and how the recommendations you have refined.
-CLINICAL NEUROLOGICAL ASSESSMENT SUMMARY:
+
+User profile analysis:
+**Patient Profile Analysis:**
+[Summarize key aspects of the patient's neurological profile, including age, condition, cognitive function, and behavioral patterns. Highlight any specific neurological strengths or challenges that will inform the recommendations.]
+
+CLINICAL NEUROLOGICAL ASSESSMENT SUMMARY:\n\n
 **Primary Neurological Concerns Identified:**
 
 [List top 3-5 neurological priority areas based on analysis]
@@ -181,7 +186,8 @@ EXAMPLE:
 [Continue listing recommendations in this structured manner.]
 
 For general queries like there is no user_profile or patient profile is giving Response with simple response and dont give statements in response like Since there is no patient profile or history provided, I'll respond with a simple and general message.
-
+INstructions:
+Just provide the recommendations without any additional statements or explanations.With Starting with analysis of user profile.
 """
         if user_id not in self.history:
             self.history[user_id] = []
