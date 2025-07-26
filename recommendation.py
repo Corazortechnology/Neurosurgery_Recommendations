@@ -3,6 +3,20 @@ from nlp_services.summarize import Summarizer
 import csv
 import uuid
 import pandas as pd
+from pymongo import MongoClient
+from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+MONGOURI = os.getenv("MONGO_URI")
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
+MONGO_COLLECTION_NAME = os.getenv("MONGO_COLLECTION_NAME")
+
+client = MongoClient(MONGOURI) 
+db = client[MONGO_DB_NAME] 
+logs_collection = db[MONGO_COLLECTION_NAME]  
 
 feedback_df = pd.read_csv("/home/dell-p112f210/Documents/RAG_Chatbot/feedback.csv")
 
@@ -79,12 +93,12 @@ Please provide constructive, practical, and brief feedback that a therapist migh
 
         system_prompt = "You are a specialized healthcare AI assistant providing personalized recommendations for patients with sensory processing and behavioral needs."
         
-        prompt="""You are a specialized healthcare AI assistant providing personalized, refined recommendations for patients with sensory processing and behavioral needs.
+        prompt = """You are a specialized neurological healthcare AI assistant providing personalized, refined recommendations and practical suggestions for patients with neurological conditions, including sensory processing, behavioral, and cognitive needs.
 
 PATIENT PROFILE:
 {{patient_profile}}
 
-HISTORY & PREVIOUS RECOMMENDATIONS:
+NEUROLOGICAL HISTORY & PREVIOUS RECOMMENDATIONS:
 {{patient_history}}
 
 CONTEXTUAL KNOWLEDGE BASE:
@@ -102,30 +116,27 @@ BEHAVIORAL ANALYSIS:
 PREVIOUS FEEDBACK & ITERATION (if available):
 {{feedback_data}}
 
-if feedback_data is provided Exaplain first the feeddbacks you analyzed for refining recommendation to the patient.
+if feedback_data is provided Explain first the feedbacks you analyzed for refining recommendations to the patient.
 
 ANALYSIS FRAMEWORK:
 Before providing recommendations, conduct a comprehensive analysis using the provided data:
 
-1. **REVIEW HISTORY & PREVIOUS RECOMMENDATIONS:**
-   - Analyze patient_history to understand all prior recommendations and interventions provided.
+1. **REVIEW NEUROLOGICAL HISTORY & PREVIOUS RECOMMENDATIONS:**
+   - Analyze patient_history to understand prior neurological assessments, recommendations, therapies, and interventions provided.
    - Identify what has been tried, the outcomes, and feedback.
    - Ensure recommendations are not repetitive; propose only new, refined, or complementary strategies that build upon what has been done, unless an existing recommendation requires adjustment for improved effectiveness.
 
 2. **INTEGRATE SENTIMENT ANALYSIS DATA:**
    - Use sentiment_analysis to understand current emotional tone and communication patterns.
-   - Consider sentiment trends and key phrases indicating the patient's current state.
-   - Adapt communication strategies based on sentiment patterns.
+   - Adapt communication and intervention strategies based on sentiment patterns.
 
 3. **UTILIZE EMOTIONAL STATE DATA:**
-   - Incorporate emotional_state data to identify primary emotions and triggers.
-   - Consider emotional intensity levels when recommending interventions.
-   - Address specific emotional regulation needs based on provided emotional data.
+   - Incorporate emotional_state data to identify primary emotions and neurological regulation needs.
+   - Consider emotional intensity levels and triggers when recommending interventions.
 
 4. **APPLY BEHAVIORAL ANALYSIS DATA:**
-   - Use behavioral_analysis data to understand behavior patterns, frequency, and triggers.
-   - Consider antecedents and consequences when designing interventions.
-   - Build on adaptive behaviors and address maladaptive patterns identified.
+   - Use behavioral_analysis to understand behavior patterns, neurological symptoms, frequency, and triggers.
+   - Consider antecedents and consequences when designing neurological interventions.
 
 5. **INTEGRATE FEEDBACK DATA:**
    - Analyze feedback_data to identify therapist or caregiver insights on previous recommendations.
@@ -133,41 +144,43 @@ Before providing recommendations, conduct a comprehensive analysis using the pro
    - When recommendations are improved or adjusted based on feedback, clearly indicate these refinements in the recommendations section to demonstrate continuity and responsiveness to therapist input.
 
 RECOMMENDATION GUIDELINES:
-- Analyze the patient's age, behaviors, interests, sensory sensitivities, current therapy approaches, and history.
+- Analyze the patient's age, neurological condition, cognitive function, behaviors, interests, sensory sensitivities, and therapy history.
 - Use Contextual Knowledge Base to inform recommendations.
-- Ensure recommendations are contextually relevant and avoid repeating identical suggestions unnecessarily.
-- Consider developmental appropriateness for the patient's age.
+- Ensure recommendations are neurologically and contextually relevant, avoiding repetitive suggestions.
+- Consider developmental appropriateness and neurological impact.
 - Leverage the patient's interests to make recommendations more engaging and effective.
-- Address specific sensory triggers and sensitivities mentioned.
-- Build upon existing therapy approaches when applicable.
-- **Prioritize emotional regulation and behavioral support strategies.**
+- Address specific sensory triggers and neurological sensitivities mentioned.
+- Build upon existing neurological therapy approaches when applicable.
+- **Prioritize emotional regulation, cognitive support, and behavioral strategies specific to neurological conditions.**
 - **Incorporate sentiment analysis to tailor communication and intervention approaches.**
 - **Refine recommendations based on previous feedback and outcomes.**
-- Provide practical, actionable recommendations that can be implemented by caregivers, teachers, or therapists.
+- Provide practical, actionable recommendations that can be implemented by caregivers, teachers, therapists, or neurologists.
 
 STRUCTURED RECOMMENDATION FORMAT:
 if feedback_Data:
-    Explain first the feedbacks and how the recommenations you have refined.
-CLINICAL ASSESSMENT SUMMARY:
-**Primary Concerns Identified:**
+    Explain first the feedbacks and how the recommendations you have refined.
+CLINICAL NEUROLOGICAL ASSESSMENT SUMMARY:
+**Primary Neurological Concerns Identified:**
 
-[List top 3-5 priority areas based on analysis]
+[List top 3-5 neurological priority areas based on analysis]
 
 **Strengths & Protective Factors:**
 
-[Identify patient's existing strengths and resources]
+[Identify patient's existing neurological, cognitive, and behavioral strengths]
 
 **Risk Factors & Triggers:**
 
-[Document key environmental, emotional, or behavioral triggers]
+[Document key environmental, emotional, behavioral, or neurological triggers]
 
 RECOMMENDATIONS:
 [List tailored, practical, and contextually appropriate recommendations with clear rationale. For each recommendation improved or adjusted based on therapist feedback, indicate with the prefix "**REFINED BASED ON FEEDBACK:**" followed by the updated recommendation and a brief explanation of the adjustment made. Ensure all recommendations build upon history, maintain continuity of care, and demonstrate responsiveness to feedback.]
 
 EXAMPLE:
-**REFINED BASED ON FEEDBACK:** Introduce a weighted lap pad during group activities to improve seated attention. Therapist feedback indicated prior sensory cushion intervention helped briefly but lacked deep pressure input. This refinement incorporates deep pressure to address proprioceptive needs more effectively.
+**REFINED BASED ON FEEDBACK:** Implement structured cognitive breaks every 15 minutes during academic tasks. Therapist feedback indicated previous 30-minute sustained tasks led to mental fatigue and reduced task accuracy. This refinement reduces cognitive load and supports neurological attention capacity more effectively.
 
 [Continue listing recommendations in this structured manner.]
+
+For general queries like there is no user_profile or patient profile is giving Response with simple response and dont give statements in response like Since there is no patient profile or history provided, I'll respond with a simple and general message.
 
 """
         if user_id not in self.history:
@@ -186,11 +199,11 @@ EXAMPLE:
 
         if "feedback_data" not in context_vars:
             context_vars["feedback_data"] = []
-        matching_feedback = feedback_df[feedback_df['recommendation_id'] == recommendation_id]
-        print(matching_feedback)
-        for i, row in matching_feedback.iterrows():
-            print(context_vars["feedback_data"])
-            context_vars["feedback_data"].append(row['feedback'])
+        # matching_feedback = feedback_df[feedback_df['recommendation_id'] == recommendation_id]
+        # print(matching_feedback)
+        # for i, row in matching_feedback.iterrows():
+        #     print(context_vars["feedback_data"])
+        #     context_vars["feedback_data"].append(row['feedback'])
         response = call_groqapi(prompt=prompt,context_vars=context_vars,system_prompt=system_prompt, model="llama-3.3-70b-versatile")
         # response = call_openai(prompt,context_vars,system_prompt)
         cleaned_response = response.strip() if response else None
@@ -204,6 +217,14 @@ EXAMPLE:
                 "recommendation": cleaned_response
             })
             self.save_to_csv(self.rec_csv_path, [recommendation_id, user_id, user_profile, cleaned_response])
+
+            logs_collection.insert_one({
+                "date": datetime.now(),
+                "user_id": user_id,
+                "recommendation": cleaned_response
+            })
+
+            print("Logged to MongoDB")
             print("History")
             print(self.history[user_id])
             self.response_count[user_id] += 1
