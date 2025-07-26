@@ -123,8 +123,41 @@ Get recommendations based on user journey.
 **Request:**
 ```json
 {
-  "user_track_journey": { ... },
-  "user_journey": { ... },
+  "user_track_journey": {
+      "Abnormal": "100%",
+      "Poor Eye Contact": "100%",
+      "Social Difficulty": "100%",
+      "Tics and Fidgets": "100%",
+      "Aggression": "100%",
+      "Depression": "100%",
+      "Fixations": "100%",
+      "Abnormal Flat Speech": "100%",
+      "Noise Sensitivity": "100%",
+      "Anxiety": "100%"
+    },
+  "user_journey":{
+    "space": "Went outside house for dinner",
+    "routine": ["School Off", "Skipped TV time"],
+    "people": "One Guest",
+    "sleep": {
+      "duration": "5hr 45m",
+      "start": "10:00 PM",
+      "end": "7:45 AM",
+      "graph_data": [2, 4, 1, 3, 0, 1, 3, 4, 2, 1]
+    },
+    "activity": [
+      {
+        "type": "Painting",
+        "time": "13:05–15:00"
+      },
+      {
+        "type": "Puzzles",
+        "time": "17:05–18:51"
+      }
+    ],
+    "components_changed_today": ["Anxiety", "Focus"],
+    "notes": "There was a hyperactivity burst for which activity was done"
+  },
   "user_name": "John Doe",
   "user_age": 30,
   "user_id": "user123",
