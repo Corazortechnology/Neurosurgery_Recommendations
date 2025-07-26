@@ -59,7 +59,7 @@ async def get_recommendation(request: QueryRequest):
     summarizer = Summarizer()
     profile_summary = summarizer.analyze(query,"llama-3.3-70b-versatile")
     logging.info(f"Profile Summary: {profile_summary}")
-    sentiment = sentiment_analyzer.analyze(behaviour_analysis['summary'])
+    sentiment = sentiment_analyzer.sentiment_analyze(behaviour_analysis['summary'])
     logging.info(f"Sentiment analysis: {sentiment}")
     emotion = emotion_analyzer.emotion_analysis(behaviour_analysis['summary'])
     logging.info(f"Emotional analysis: {emotion}")
